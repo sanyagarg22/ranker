@@ -12,7 +12,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'compare' | 'rankings'>('compare');
   const [originalItems, setOriginalItems] = useState<string[]>([]);
 
-  const initializeRanking = (items: string[]) => {
+  const initRanking = (items: string[]) => {
     if (items.length === 0) {
       setError('CSV file is empty');
       return;
@@ -37,7 +37,7 @@ export default function Home() {
     setError('');
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -48,9 +48,8 @@ export default function Home() {
         const items = text.split('\n')
           .map(line => line.split(',')[0].trim())
           .filter(item => item);
-
         setOriginalItems(items);
-        initializeRanking(items);
+        initRanking(items);
       } catch (err) {
         setError('Error reading file');
       }
@@ -166,7 +165,7 @@ export default function Home() {
                   id="upload"
                   type="file"
                   accept=".csv,.txt"
-                  onChange={handleFileUpload}
+                  onChange={onUpload}
                   className="hidden"
                 />
                 <div className="inline-block rounded-xl bg-gradient-to-r from-blue-600 to-purple-800 px-8 py-4 font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-purple-700 hover:shadow-xl">
@@ -220,7 +219,7 @@ export default function Home() {
           <button
             onClick={() => {
               if (originalItems.length > 0) {
-                initializeRanking(originalItems);
+                initRanking(originalItems);
                 setActiveTab('compare');
               }
             }}
