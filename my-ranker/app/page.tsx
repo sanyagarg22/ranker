@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 type State = 
   | { type: 'ranking'; currentItem: string; sorted: string[]; unsorted: string[]; left: number; right: number }
@@ -10,32 +10,6 @@ export default function Home() {
   const [state, setState] = useState<State | null>(null);
   const [error, setError] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'compare' | 'rankings'>('compare');
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    // Check for saved theme preference or default to system preference
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-    setIsDark(shouldBeDark);
-    if (shouldBeDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    if (newIsDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -128,18 +102,7 @@ export default function Home() {
 
   if (!state || state.type === 'complete') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-blue-50 p-4 pt-24 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
-        <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-900/80">
-          <div className="mx-auto flex max-w-5xl items-center justify-end px-4 py-4">
-            <button
-              onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-xl transition-all hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
-              aria-label="Toggle theme"
-            >
-              {isDark ? '☀️' : '🌙'}
-            </button>
-          </div>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-blue-50 p-4 pt-24">
         <div className="w-full max-w-3xl">
           {state?.type === 'complete' ? (
             <>
@@ -147,25 +110,25 @@ export default function Home() {
                 <h1 className="mb-2 bg-gradient-to-r from-blue-600 to-purple-800 bg-clip-text text-4xl font-bold text-transparent">
                   Final Ranking
                 </h1>
-                <p className="text-zinc-600 dark:text-zinc-400">Your items have been ranked!</p>
+                <p className="text-zinc-600">Your items have been ranked!</p>
               </div>
               <div className="mb-8 space-y-3">
                 {state.ranking.map((item, i) => (
                   <div
                     key={i}
-                    className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:hover:shadow-lg"
+                    className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:shadow-md"
                   >
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-800 text-lg font-bold text-white shadow-md">
                       {i + 1}
                     </div>
-                    <div className="text-lg font-medium text-zinc-900 dark:text-zinc-100">{item}</div>
+                    <div className="text-lg font-medium text-zinc-900">{item}</div>
                   </div>
                 ))}
               </div>
               <div className="flex justify-center gap-4">
                 <button
                   onClick={() => setState(null)}
-                  className="rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 font-semibold text-zinc-700 transition-all hover:border-zinc-400 hover:bg-zinc-50 hover:shadow-md dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500"
+                  className="rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 font-semibold text-zinc-700 transition-all hover:border-zinc-400 hover:bg-zinc-50 hover:shadow-md"
                 >
                   Rank Another
                 </button>
@@ -187,13 +150,12 @@ export default function Home() {
               </div>
             </>
           ) : (
-            <div className="rounded-2xl border-2 border-dashed border-zinc-300 bg-white/50 p-16 text-center backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-800/50">
+            <div className="rounded-2xl border-2 border-dashed border-zinc-300 bg-white/50 p-16 text-center backdrop-blur-sm">
               <label htmlFor="upload" className="cursor-pointer">
-                <div className="mb-6 text-6xl">📊</div>
                 <h2 className="mb-3 bg-gradient-to-r from-blue-600 to-purple-800 bg-clip-text text-3xl font-bold text-transparent">
                   Ranking Tool
                 </h2>
-                <p className="mb-6 text-zinc-600 dark:text-zinc-400">Upload a CSV file with items to rank</p>
+                <p className="mb-6 text-zinc-600">Upload a CSV file with items to rank</p>
                 <input
                   id="upload"
                   type="file"
@@ -204,10 +166,10 @@ export default function Home() {
                 <div className="inline-block rounded-xl bg-gradient-to-r from-blue-600 to-purple-800 px-8 py-4 font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-purple-700 hover:shadow-xl">
                   Choose File
                 </div>
-                <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-500">One item per line (first column used)</p>
+                <p className="mt-4 text-sm text-zinc-500">One item per line (first column used)</p>
               </label>
               {error && (
-                <div className="mt-6 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                <div className="mt-6 rounded-lg bg-red-50 p-4 text-red-700">
                   {error}
                 </div>
               )}
@@ -224,16 +186,16 @@ export default function Home() {
   const progress = ((state.sorted.length / total) * 100).toFixed(1);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-blue-50 p-4 pt-24 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-900/80">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div className="flex rounded-xl border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-blue-50 p-4 pt-24">
+      <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-sm">
+        <div className="relative mx-auto flex max-w-5xl items-center justify-center px-4 py-4">
+          <div className="flex rounded-xl border border-zinc-200 bg-white p-1 shadow-lg">
             <button
               onClick={() => setActiveTab('compare')}
               className={`rounded-lg px-6 py-3 font-semibold transition-all ${
                 activeTab === 'compare'
                   ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-zinc-600 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  : 'text-zinc-600 hover:text-zinc-800'
               }`}
             >
               Compare Items
@@ -243,29 +205,22 @@ export default function Home() {
               className={`rounded-lg px-6 py-3 font-semibold transition-all ${
                 activeTab === 'rankings'
                   ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-zinc-600 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  : 'text-zinc-600 hover:text-zinc-800'
               }`}
             >
               Current Rankings ({state.sorted.length})
             </button>
           </div>
-          <button
-            onClick={toggleTheme}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-xl transition-all hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700"
-            aria-label="Toggle theme"
-          >
-            {isDark ? '☀️' : '🌙'}
-          </button>
         </div>
       </div>
       <div className="w-full max-w-5xl">
 
         <div className="mb-8">
-          <div className="mb-3 flex justify-between text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <div className="mb-3 flex justify-between text-sm font-medium text-zinc-700">
             <span>Progress: {state.sorted.length} / {total} items</span>
             <span className="font-semibold">{progress}%</span>
           </div>
-          <div className="h-3 w-full overflow-hidden rounded-full bg-zinc-200 shadow-inner dark:bg-zinc-800">
+          <div className="h-3 w-full overflow-hidden rounded-full bg-zinc-200 shadow-inner">
             <div
               className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-800 transition-all duration-500 shadow-md"
               style={{ width: `${progress}%` }}
@@ -278,12 +233,12 @@ export default function Home() {
             <div className="mb-6 flex flex-col gap-6 sm:flex-row sm:gap-8">
               <button
                 onClick={() => handleSelect(false)}
-                className="group flex-1 rounded-2xl border-2 border-zinc-200 bg-white p-10 text-left shadow-lg transition-all hover:border-blue-400 hover:shadow-2xl hover:scale-[1.02] dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-blue-500"
+                className="group flex-1 rounded-2xl border-2 border-zinc-200 bg-white p-10 text-left shadow-lg transition-all hover:border-blue-400 hover:shadow-2xl hover:scale-[1.02]"
               >
-                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Option 1
                 </div>
-                <div className="text-3xl font-bold text-zinc-900 transition-colors group-hover:text-blue-600 dark:text-zinc-100 dark:group-hover:text-blue-400">
+                <div className="text-3xl font-bold text-zinc-900 transition-colors group-hover:text-blue-600">
                   {item1}
                 </div>
               </button>
@@ -296,12 +251,12 @@ export default function Home() {
 
               <button
                 onClick={() => handleSelect(true)}
-                className="group flex-1 rounded-2xl border-2 border-zinc-200 bg-white p-10 text-left shadow-lg transition-all hover:border-purple-800 hover:shadow-2xl hover:scale-[1.02] dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-purple-800"
+                className="group flex-1 rounded-2xl border-2 border-zinc-200 bg-white p-10 text-left shadow-lg transition-all hover:border-purple-800 hover:shadow-2xl hover:scale-[1.02]"
               >
-                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Option 2
                 </div>
-                <div className="text-3xl font-bold text-zinc-900 transition-colors group-hover:text-purple-800 dark:text-zinc-100 dark:group-hover:text-purple-400">
+                <div className="text-3xl font-bold text-zinc-900 transition-colors group-hover:text-purple-800">
                   {state.currentItem}
                 </div>
               </button>
@@ -310,7 +265,7 @@ export default function Home() {
             <div className="flex justify-center">
               <button
                 onClick={handleSkip}
-                className="rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 font-semibold text-zinc-600 transition-all hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-800 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-500"
+                className="rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 font-semibold text-zinc-600 transition-all hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-800"
               >
                 Skip This Item ({state.currentItem})
               </button>
@@ -319,21 +274,21 @@ export default function Home() {
         ) : (
           <div className="space-y-3">
             {state.sorted.length === 0 ? (
-              <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-white/50 p-12 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+              <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-white/50 p-12 text-center">
                 <div className="mb-4 text-4xl">🏆</div>
-                <h3 className="mb-2 text-xl font-semibold text-zinc-700 dark:text-zinc-300">No items ranked yet</h3>
-                <p className="text-zinc-600 dark:text-zinc-400">Switch to Compare Items tab to start ranking</p>
+                <h3 className="mb-2 text-xl font-semibold text-zinc-700">No items ranked yet</h3>
+                <p className="text-zinc-600">Switch to Compare Items tab to start ranking</p>
               </div>
             ) : (
               state.sorted.map((item, i) => (
                 <div
                   key={i}
-                  className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:hover:shadow-lg"
+                  className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:shadow-md"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-800 text-lg font-bold text-white shadow-md">
                     {i + 1}
                   </div>
-                  <div className="text-lg font-medium text-zinc-900 dark:text-zinc-100">{item}</div>
+                  <div className="text-lg font-medium text-zinc-900">{item}</div>
                 </div>
               ))
             )}
