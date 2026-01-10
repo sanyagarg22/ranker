@@ -10,6 +10,32 @@ export default function Home() {
   const [state, setState] = useState<State | null>(null);
   const [error, setError] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'compare' | 'rankings'>('compare');
+  const [originalItems, setOriginalItems] = useState<string[]>([]);
+
+  const initializeRanking = (items: string[]) => {
+    if (items.length === 0) {
+      setError('CSV file is empty');
+      return;
+    }
+
+    if (items.length === 1) {
+      setState({ type: 'complete', ranking: items });
+      return;
+    }
+
+    const shuffled = [...items].sort(() => Math.random() - 0.5);
+    const [first, ...rest] = shuffled;
+
+    setState({
+      type: 'ranking',
+      currentItem: rest[0],
+      sorted: [first],
+      unsorted: rest.slice(1),
+      left: 0,
+      right: 0,
+    });
+    setError('');
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -23,28 +49,8 @@ export default function Home() {
           .map(line => line.split(',')[0].trim())
           .filter(item => item);
 
-        if (items.length === 0) {
-          setError('CSV file is empty');
-          return;
-        }
-
-        if (items.length === 1) {
-          setState({ type: 'complete', ranking: items });
-          return;
-        }
-
-        const shuffled = [...items].sort(() => Math.random() - 0.5);
-        const [first, ...rest] = shuffled;
-
-        setState({
-          type: 'ranking',
-          currentItem: rest[0],
-          sorted: [first],
-          unsorted: rest.slice(1),
-          left: 0,
-          right: 0,
-        });
-        setError('');
+        setOriginalItems(items);
+        initializeRanking(items);
       } catch (err) {
         setError('Error reading file');
       }
@@ -211,6 +217,17 @@ export default function Home() {
               Current Rankings ({state.sorted.length})
             </button>
           </div>
+          <button
+            onClick={() => {
+              if (originalItems.length > 0) {
+                initializeRanking(originalItems);
+                setActiveTab('compare');
+              }
+            }}
+            className="absolute right-4 rounded-lg border-2 border-red-300 bg-white px-4 py-2 font-semibold text-red-600 transition-all hover:border-red-400 hover:bg-red-50 hover:text-red-700"
+          >
+            Start Over
+          </button>
         </div>
       </div>
       <div className="w-full max-w-5xl">
@@ -267,7 +284,7 @@ export default function Home() {
                 onClick={handleSkip}
                 className="rounded-xl border-2 border-zinc-300 bg-white px-6 py-3 font-semibold text-zinc-600 transition-all hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-800"
               >
-                Skip This Item ({state.currentItem})
+                Skip "{state.currentItem}"
               </button>
             </div>
           </>
@@ -285,7 +302,7 @@ export default function Home() {
                   key={i}
                   className="group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:shadow-md"
                 >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-800 text-lg font-bold text-white shadow-md">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-800 text-lg font-bold text-white shadow-md">
                     {i + 1}
                   </div>
                   <div className="text-lg font-medium text-zinc-900">{item}</div>
