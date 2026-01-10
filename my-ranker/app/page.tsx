@@ -107,7 +107,7 @@ export default function Home() {
 
   if (!state || state.type === 'complete') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-blue-50 p-4 pt-24">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-100 via-purple-50 to-purple-100 p-4">
         <div className="w-full max-w-3xl">
           {state?.type === 'complete' ? (
             <>
@@ -191,8 +191,8 @@ export default function Home() {
   const progress = ((state.sorted.length / total) * 100).toFixed(1);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-blue-50 p-4 pt-24">
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-sm">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-100 via-purple-50 to-purple-100 p-4">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-transparent">
         <div className="relative mx-auto flex max-w-5xl items-center justify-center px-4 py-4">
           <div className="flex rounded-xl border border-zinc-200 bg-white p-1 shadow-lg">
             <button
@@ -229,7 +229,7 @@ export default function Home() {
           </button>
         </div>
       </div>
-      <div className="w-full max-w-5xl">
+      <div className="w-full max-w-5xl pt-24">
 
         <div className="mb-8">
           <div className="mb-3 flex justify-between text-sm font-medium text-zinc-700">
