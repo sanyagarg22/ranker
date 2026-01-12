@@ -158,7 +158,7 @@ export default function Home() {
             <div className="rounded-2xl border-2 border-dashed border-zinc-300 bg-white/50 p-16 text-center backdrop-blur-sm">
               <label htmlFor="upload" className="cursor-pointer">
                 <h2 className="mb-3 bg-gradient-to-r from-blue-600 to-purple-800 bg-clip-text text-3xl font-bold text-transparent">
-                  Ranking Tool
+                  Custom Ranker!
                 </h2>
                 <p className="mb-6 text-zinc-600">Upload a CSV file with items to rank</p>
                 <input

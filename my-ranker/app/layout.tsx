@@ -13,7 +13,7 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "Ranking Tool",
+  title: "Custom Ranker",
   description: "Rank items by comparing them one at a time",
 };
 
